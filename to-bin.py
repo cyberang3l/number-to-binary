@@ -54,15 +54,14 @@ class HexBinDecPrinter:
         self._raw_val: str = raw_value
         self._split: int = print_split
         self._number: int = 0
-        self._bits_to_show: int = 32  # 32 or 64
+        self._bits_to_show: int = 16  # 16, 32, 64 or 128
         self._hex_str: str = ""
         self._bin_str: str = ""
-        self._base = 10
         self._convert_raw_val_to_num()
 
     def _convert_raw_val_to_num(self):
-        base = 10
-        explicit = False
+        base: int = 10
+        explicit: bool = False
         if self._raw_val.startswith("0b"):
             explicit = True
             base = 2
@@ -94,7 +93,7 @@ class HexBinDecPrinter:
                     f"cannot parse '{raw_val}' neither as a base 10 integer, base 16 or base 2. Have you provided a valid number?")
                 exit(1)
 
-        self._bits_to_show = 16
+        self._bits_to_show: int = 16
         if self._number & 0xFFFF != self._number:
             self._bits_to_show = 32
         if self._number & 0xFFFFFFFF != self._number:
@@ -111,7 +110,7 @@ class HexBinDecPrinter:
                 f"Only supporting up to {self._bits_to_show} bit conversions")
 
     def get_spaced_hex_string(self, string: str) -> str:
-        hex_spaced = ""
+        hex_spaced: str = ""
         for i in range(0, self._bits_to_show):
             if i % 4 == 3:
                 hex_spaced += string[int(i / 4)]
@@ -123,7 +122,7 @@ class HexBinDecPrinter:
         return hex_spaced
 
     def get_spaced_bin_string(self, string: str) -> str:
-        bin_spaced = ""
+        bin_spaced: str = ""
         for i in range(0, self._bits_to_show):
             bin_spaced += string[i]
 
@@ -132,15 +131,15 @@ class HexBinDecPrinter:
         return bin_spaced
 
     def _get_bin_indices(self, string: str) -> str:
-        def vert_lines_for_row(num: int):
-            vert_lines = ""
+        def vert_lines_for_row(num: int) -> str:
+            vert_lines: str = ""
             for i in range(0, num):
                 vert_lines += "|"
                 if i % self._split == self._split - 1 and i != 0:
                     vert_lines += " "
             return vert_lines
 
-        bin_indices = ""
+        bin_indices: str = ""
         for i in range(0, self._bits_to_show):
             bin_indices += vert_lines_for_row(i)
             bin_indices += f"{self._bits_to_show - 1 - i}\n"
