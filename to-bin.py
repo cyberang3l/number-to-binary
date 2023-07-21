@@ -50,11 +50,11 @@ import sys
 
 
 class HexBinDecPrinter:
-    def __init__(self, raw_value: str, print_split: int = 4):
+    def __init__(self, raw_value: str, print_split: int = 4, bits_to_show: int = 0):
         self._raw_val: str = raw_value
         self._split: int = print_split
         self._number: int = 0
-        self._bits_to_show: int = 16  # 16, 32, 64 or 128
+        self._bits_to_show: int = bits_to_show  # 0 (auto-guess), 8, 16, 32, 64 or 128
         self._hex_str: str = ""
         self._bin_str: str = ""
         self._convert_raw_val_to_num()
@@ -94,13 +94,16 @@ class HexBinDecPrinter:
                     f"cannot parse '{self._raw_val}' neither as a base 10 integer, base 16 or base 2. Have you provided a valid number?")
                 exit(1)
 
-        self._bits_to_show: int = 16
-        if self._number & 0xFFFF != self._number:
-            self._bits_to_show = 32
-        if self._number & 0xFFFFFFFF != self._number:
-            self._bits_to_show = 64
-        if self._number & 0xFFFFFFFFFFFFFFFF != self._number:
-            self._bits_to_show = 128
+        if not self._bits_to_show:
+            self._bits_to_show = 8
+            if self._number & 0xFF != self._number:
+                self._bits_to_show = 16
+            if self._number & 0xFFFF != self._number:
+                self._bits_to_show = 32
+            if self._number & 0xFFFFFFFF != self._number:
+                self._bits_to_show = 64
+            if self._number & 0xFFFFFFFFFFFFFFFF != self._number:
+                self._bits_to_show = 128
 
         hex_chars_to_show = int(self._bits_to_show / 4)
 
