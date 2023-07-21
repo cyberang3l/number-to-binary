@@ -70,16 +70,17 @@ class HexBinDecPrinter:
             base = 16
 
         if self._raw_val.startswith("-"):
-            print(f"Only working with positive integers. {raw_val} provided")
+            print(
+                f"Only working with positive integers. {self._raw_val} provided")
             exit(1)
 
         try:
-            self._number = int(raw_val, base)
+            self._number = int(self._raw_val, base)
         except ValueError:
             if explicit:
                 expected_number_type = "binary" if base == 2 else "hexadecimal"
                 print(
-                    f"cannot parse '{raw_val}' with base {base}. Have you provided a valid {expected_number_type} number?")
+                    f"cannot parse '{self._raw_val}' with base {base}. Have you provided a valid {expected_number_type} number?")
                 exit(1)
             try:
                 # If the user hasn't explicitly provided a valid decimal number, or a
@@ -87,10 +88,10 @@ class HexBinDecPrinter:
                 # the number as hexadecimal. If this attempt fails too, print an
                 # invalid number error.
                 base = 16
-                self._number = int(raw_val, base)
+                self._number = int(self._raw_val, base)
             except ValueError:
                 print(
-                    f"cannot parse '{raw_val}' neither as a base 10 integer, base 16 or base 2. Have you provided a valid number?")
+                    f"cannot parse '{self._raw_val}' neither as a base 10 integer, base 16 or base 2. Have you provided a valid number?")
                 exit(1)
 
         self._bits_to_show: int = 16
