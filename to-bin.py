@@ -50,11 +50,16 @@ import sys
 
 
 class HexBinDecPrinter:
-    def __init__(self, raw_value: str, print_split: int = 4, bits_to_show: int = 0):
+    def __init__(
+            self,
+            raw_value: str,
+            print_split: int = 4,
+            bits_to_show: int = 0):
         self._raw_val: str = raw_value
         self._split: int = print_split
         self._number: int = 0
-        self._bits_to_show: int = bits_to_show  # 0 (auto-guess), 8, 16, 32, 64 or 128
+        # 0 (auto-guess), 8, 16, 32, 64 or 128
+        self._bits_to_show: int = bits_to_show
         self._hex_str: str = ""
         self._bin_str: str = ""
         self._convert_raw_val_to_num()
@@ -123,7 +128,7 @@ class HexBinDecPrinter:
 
             if i % self._split == self._split - 1:
                 hex_spaced += " "
-        return hex_spaced
+        return hex_spaced + " <- hex value"
 
     def get_spaced_bin_string(self, string: str) -> str:
         bin_spaced: str = ""
@@ -132,9 +137,30 @@ class HexBinDecPrinter:
 
             if i % self._split == self._split - 1:
                 bin_spaced += " "
-        return bin_spaced
+        return bin_spaced + " <- binary value"
 
-    def _get_bin_indices(self, string: str) -> str:
+    def get_spaced_indices_per_split(self) -> str:
+        indices = ""
+        for i in range(self._bits_to_show - 1, -1, -1):
+            bit_index = i % self._split
+            if bit_index == self._split - 1 or bit_index == 0:
+                indices += str(bit_index)
+            else:
+                indices += " "
+            if i % self._split == 0:
+                indices += " "
+        return indices + " <- bit index per split"
+
+    def get_lines_aligned_with_splits(self) -> str:
+        lines: str = ""
+        for i in range(0, self._bits_to_show):
+            lines += "|"
+
+            if i % self._split == self._split - 1:
+                lines += " "
+        return lines
+
+    def get_bin_indices(self) -> str:
         def vert_lines_for_row(num: int) -> str:
             vert_lines: str = ""
             for i in range(0, num):
@@ -146,7 +172,8 @@ class HexBinDecPrinter:
         bin_indices: str = ""
         for i in range(0, self._bits_to_show):
             bin_indices += vert_lines_for_row(i)
-            bin_indices += f"{self._bits_to_show - 1 - i}\n"
+            bin_indices += f"{self._bits_to_show - 1 - i}"
+            bin_indices += "\n" if i < self._bits_to_show - 1 else ""
         return bin_indices
 
     def print_all(self):
@@ -156,7 +183,9 @@ class HexBinDecPrinter:
 
         print(8 * "-" + self._bits_to_show * "-")
 
-        print(self._get_bin_indices(self._bin_str))
+        print(self.get_bin_indices())
+        print(self.get_lines_aligned_with_splits())
+        print(self.get_spaced_indices_per_split())
         print(self.get_spaced_bin_string(self._bin_str))
         print(self.get_spaced_hex_string(self._hex_str))
 
@@ -164,6 +193,6 @@ class HexBinDecPrinter:
 if __name__ == "__main__":
     # Parse hex from input
     raw_val = sys.argv[1]
-    split = 4
+    split = 8
     printer = HexBinDecPrinter(raw_val, split)
     printer.print_all()
